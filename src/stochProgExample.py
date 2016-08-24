@@ -3,13 +3,18 @@ from mpi4py import MPI
 
 class MasterProblem(object):
     
+    # probably want to create the model in the __init__ method
+    
     def solve(self):
         pass
     
     def getOptimalSolution(self):
+        # needs more here
         return [1, 1, 1] # change this later
     
 class SecondStageProblem(object):
+    
+    # probably want to create the model in the __init__ method
     
     def setFirstStageSolution(self, firstStageSolution):
         self.firstStageSolution = firstStageSolution
@@ -18,6 +23,7 @@ class SecondStageProblem(object):
         self.rhs = rhs
     
     def getOptimalObjectiveValue(self):
+        # needs more here
         return self.rhs + sum(self.firstStageSolution) # change this later
     
 secondStageProb = SecondStageProblem() # create second stage problem here
@@ -32,7 +38,7 @@ size = comm.Get_size()
 rank = comm.Get_rank()
 
 # initialization
-probabilities = [1.0/size for x in range(size)]
+probabilities = [1.0/size for x in range(size)] # change this later
 firstStageSolution = []
 if rank == 0:
     masterProblem = MasterProblem()
