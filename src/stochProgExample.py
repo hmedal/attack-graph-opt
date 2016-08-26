@@ -54,13 +54,18 @@ if rank == 0:
 else:
     firstStageSolution = None
 
-firstStageSolution = comm.bcast(firstStageSolution, root = 0)
-rhsValue = comm.scatter(rhsValues, root=0)
-secondStageObjectiveValue = computeSecondStageObjValue(firstStageSolution,rhsValue)
-print('rank',rank,'has second Stage Objective Value:', secondStageObjectiveValue, rhsValue)
-
-secondStageObjectiveValues = comm.gather(secondStageObjectiveValue,root=0)
-
-if rank == 0:
-    expectedCost = sum([a * b for a,b in zip(secondStageObjectiveValues, probabilities)])
-    print('expected Cost:', expectedCost)
+i = 0
+while(True):
+    firstStageSolution = comm.bcast(firstStageSolution, root = 0)
+    rhsValue = comm.scatter(rhsValues, root=0)
+    secondStageObjectiveValue = computeSecondStageObjValue(firstStageSolution,rhsValue)
+    print('iteration', i, 'rank',rank,'has second Stage Objective Value:', secondStageObjectiveValue, rhsValue)
+    
+    secondStageObjectiveValues = comm.gather(secondStageObjectiveValue,root=0)
+    
+    if rank == 0:
+        expectedCost = sum([a * b for a,b in zip(secondStageObjectiveValues, probabilities)])
+        print('iteration', i, 'expected Cost:', expectedCost)
+    if i >= 3:
+        break
+    i += 1
