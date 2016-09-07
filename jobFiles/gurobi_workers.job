@@ -1,0 +1,28 @@
+#PBS -N GurobiWorkers
+#PBS -q qdasi200p48h
+#PBS -l nodes=4:ppn=20
+#PBS -l walltime=1:00:00
+#PBS -r n
+#PBS -V
+#PBS -M hugh.medal@msstate.edu
+#PBS -mbea
+cd $PBS_O_WORKDIR
+
+uniq $PBS_NODEFILE > hosts
+
+# break up hosts into individual nodes
+master=$(head -1 hosts)
+node1=$(head -2 hosts | tail -1)
+node2=$(head -3 hosts | tail -1)
+node3=$(tail -1 hosts)
+
+## crank up workers
+nohup mpirun -n 1 -hosts $node1 grb_rs &
+nohup mpirun -n 1 -hosts $node2 grb_rs &
+nohup mpirun -n 1 -hosts $node3 grb_rs &
+
+## delay so the workers are sure to be up
+sleep 5
+
+## start gurobi calculation
+mpirun -n 1 -hosts $master gurobi_cl WorkerPool=$node1,$node2,$node3 DistributedMIPJobs=3 /usr/local/gurobi652/linux64/examples/data/misc07.mps
