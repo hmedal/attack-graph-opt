@@ -1,32 +1,43 @@
-#PBS -N GurobiWorkers
+#PBS -N GurobiWorkers_AttackGraph
 #PBS -q qdasi200p48h
-#PBS -l nodes=4:ppn=20
-#PBS -l walltime=1:00:00
+#PBS -l nodes=10:ppn=20
+#PBS -l walltime=3:00:00
 #PBS -r n
 #PBS -V
-#PBS -M hugh.medal@msstate.edu
 #PBS -mbea
 cd $PBS_O_WORKDIR
 
 uniq $PBS_NODEFILE > hosts
-
-ssh-agent $SHELL
-ssh-add
+ 
+ssh-agent $SHELL # remove this
+ssh-add # remove this
 
 # break up hosts into individual nodes
 master=$(head -1 hosts)
 node1=$(head -2 hosts | tail -1)
 node2=$(head -3 hosts | tail -1)
-node3=$(tail -1 hosts)
+node3=$(head -4 hosts | tail -1)
+node4=$(head -5 hosts | tail -1)
+node5=$(head -6 hosts | tail -1)
+node6=$(head -7 hosts | tail -1)
+node7=$(head -8 hosts | tail -1)
+node8=$(head -9 hosts | tail -1)
+node9=$(tail -1 hosts)
 
 ## crank up workers
 nohup mpirun -n 1 -hosts $master grb_rs &
 nohup mpirun -n 1 -hosts $node1 grb_rs &
 nohup mpirun -n 1 -hosts $node2 grb_rs &
 nohup mpirun -n 1 -hosts $node3 grb_rs &
+nohup mpirun -n 1 -hosts $node4 grb_rs &
+nohup mpirun -n 1 -hosts $node5 grb_rs &
+nohup mpirun -n 1 -hosts $node6 grb_rs &
+nohup mpirun -n 1 -hosts $node7 grb_rs &
+nohup mpirun -n 1 -hosts $node8 grb_rs &
+nohup mpirun -n 1 -hosts $node9 grb_rs &
 
 ## delay so the workers are sure to be up
 sleep 5
 
 ## start gurobi calculation
-python runScript.py -m $master -w $master,$node1,$node2,$node3 -n 4
+python runScript.py -m $master -w $master,$node1,$node2,$node3,$node4,$node5,$node6,$node7,$node8,$node9 -n 10
