@@ -10,6 +10,9 @@ cd $PBS_O_WORKDIR
 
 uniq $PBS_NODEFILE > hosts
 
+ssh-agent $SHELL
+ssh-add
+
 # break up hosts into individual nodes
 master=$(head -1 hosts)
 node1=$(head -2 hosts | tail -1)
@@ -17,7 +20,7 @@ node2=$(head -3 hosts | tail -1)
 node3=$(tail -1 hosts)
 
 ## crank up workers
-nohup mpirun -n 1 -hosts $master grb_rs & ## Hugh added this
+nohup mpirun -n 1 -hosts $master grb_rs &
 nohup mpirun -n 1 -hosts $node1 grb_rs &
 nohup mpirun -n 1 -hosts $node2 grb_rs &
 nohup mpirun -n 1 -hosts $node3 grb_rs &
@@ -26,4 +29,4 @@ nohup mpirun -n 1 -hosts $node3 grb_rs &
 sleep 5
 
 ## start gurobi calculation
-python runScript.py -m $master -w $master,$node1,$node2,$node3 -n 4
+mpirun -n 1 -hosts $master gurobi_cl WorkerPool=$master,$node1,$node2,$node3 DistributedMIPJobs=4 /usr/local/gurobi652/linux64/examples/data/misc07.mps

@@ -10,6 +10,9 @@ cd $PBS_O_WORKDIR
 
 uniq $PBS_NODEFILE > hosts
 
+ssh-agent $SHELL
+ssh-add
+
 # break up hosts into individual nodes
 master=$(head -1 hosts)
 node1=$(head -2 hosts | tail -1)
