@@ -538,6 +538,10 @@ while UB-LB >= tolerance * UB:
     
     ####Beginning of Solving the master problem loop###############################################
     myMasterModel = read("masterModel.lp")
+    theta = myMasterModel.getVars()[0]
+    x = myMasterModel.getVars()[1:numArcs] # change the indices
+    beta = myMasterModel.getVars()[1:numArcs] # change the indices
+    B = myMasterModel.getVars()[1:numArcs] # change the indices
     X, LB_temp , theta, x,m, etaVal, vVal, uVal = calcMasterproblem(myMasterModel, theta, x, m)
     ###Calculating the time to solve the master problem and the number of variables and constraints in the masterModel in this iterations
     if iterCount<TRiter:
