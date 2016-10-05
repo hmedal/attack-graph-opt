@@ -16,7 +16,7 @@ comm = MPI.COMM_WORLD
 numprocs = comm.size
 rank =comm.Get_rank()
 
-nScenario= 100.0    #No of Scenarios
+nScenario= 120.0    #No of Scenarios
 tolerance= 0.05 #gap between the upper and lower bound
 SD = 0.05       #standard deviation
 Bd= 150.0           #Defender's budget
