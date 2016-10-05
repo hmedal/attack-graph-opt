@@ -23,6 +23,7 @@ def readMasterModel(filename):
     pass # @TODO-Tanveer: implement this method
 
 def solveSubproblems():
+    print "solving subproblems on rank " + str(rank)
     pass # @TODO-Tanveer: implement this method
 
 def modifyMasterModel():

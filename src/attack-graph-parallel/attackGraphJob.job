@@ -25,16 +25,16 @@ node8=$(head -9 hosts | tail -1)
 node9=$(tail -1 hosts)
 
 ## crank up workers
-nohup mpirun -n 1 -hosts $master grb_rs &
-nohup mpirun -n 1 -hosts $node1 grb_rs &
-nohup mpirun -n 1 -hosts $node2 grb_rs &
-nohup mpirun -n 1 -hosts $node3 grb_rs &
-nohup mpirun -n 1 -hosts $node4 grb_rs &
-nohup mpirun -n 1 -hosts $node5 grb_rs &
-nohup mpirun -n 1 -hosts $node6 grb_rs &
-nohup mpirun -n 1 -hosts $node7 grb_rs &
-nohup mpirun -n 1 -hosts $node8 grb_rs &
-nohup mpirun -n 1 -hosts $node9 grb_rs &
+nohup mpirun -n 1 -host $master grb_rs &
+nohup mpirun -n 1 -host $node1 grb_rs &
+nohup mpirun -n 1 -host $node2 grb_rs &
+nohup mpirun -n 1 -host $node3 grb_rs &
+nohup mpirun -n 1 -host $node4 grb_rs &
+nohup mpirun -n 1 -host $node5 grb_rs &
+nohup mpirun -n 1 -host $node6 grb_rs &
+nohup mpirun -n 1 -host $node7 grb_rs &
+nohup mpirun -n 1 -host $node8 grb_rs &
+nohup mpirun -n 1 -host $node9 grb_rs &
 
 ## delay so the workers are sure to be up
 sleep 5
