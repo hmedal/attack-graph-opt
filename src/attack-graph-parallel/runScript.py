@@ -3,6 +3,7 @@ import argparse
 
 max_iter = 10
 tolerance= 0.05 #gap between the upper and lower bound
+Bd= 150.0           #Defender's budget
 
 def getLB(filename):
     file = open(filename)
@@ -12,7 +13,6 @@ def getLB(filename):
 
 def createAndWriteInitialMasterProblemModel():
     theta = masterModel.addVar(lb=0, ub=GRB.INFINITY, obj=1, name='theta')
-    Bd= 150.0           #Defender's budget
     A = []      #List of all arcs
     ##Define the interdiction variable
     x = {}
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     while UB-LB >= tolerance * UB:
         masterProblemFile = 'masterModel.lp'
         os.system('mpirun -n 1 -hosts ' + args.master + ' gurobi_cl WorkerPool=' + args.worker_pool + ' DistributedMIPJobs=' + args.count + ' ResultFile=' + 'master_' + str(iter) + '.sol' + ' ' + masterProblemFile) # solve master problem
-        os.system('mpirun -np ' + str(numProcs) + ' python solveSubproblems.py master_' + str(iter) + '.sol') # solve sub problem, given solution to master problem; change "subProbs.py"
+        os.system('mpirun -np ' + str(numProcs) + ' python solveSubproblems.py master_' + str(iter) + '.sol') # solve sub problem, given solution to master problem
         LB = getLB("master_" + str(iter) + ".sol")
         # @TODO-Tanveer: read upper bound from a file or compute it somehow
         if hasTerminated(iter, ub, lb):
