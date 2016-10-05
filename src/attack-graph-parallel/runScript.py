@@ -1,17 +1,14 @@
 import os
 import argparse
 
-gap_tol = 0.01
 max_iter = 10
+tolerance= 0.05 #gap between the upper and lower bound
 
 def getLB(filename):
     file = open(filename)
     ub = float(file.readlines()[1].split()[4])
     file.close
     return ub
-    
-def hasTerminated(iter, ub, lb):
-    return abs(ub-lb) < gap_tol or iter >= max_iter
 
 def createAndWriteInitialMasterProblemModel():
     theta = masterModel.addVar(lb=0, ub=GRB.INFINITY, obj=1, name='theta')
@@ -31,18 +28,17 @@ if __name__ == "__main__":
     parser.add_argument('-m','--master', help='the master node')
     parser.add_argument('-w', '--worker_pool', help='the worker pool servers')
     parser.add_argument('-n', '--count', help='number of worker pool servers')
+    parser.add_argument('-d', '--datafile', help='the data file')
     args = parser.parse_args()
     numProcs = args.count*20
     createAndWriteInitialMasterProblemModel()
     ub = float('inf')
     lb = 0
-    for iter in range(1,max_iter + 1):
-        masterProblemFile = 'masterModel.lp' #change this
+    while UB-LB >= tolerance * UB:
+        masterProblemFile = 'masterModel.lp'
         os.system('mpirun -n 1 -hosts ' + args.master + ' gurobi_cl WorkerPool=' + args.worker_pool + ' DistributedMIPJobs=' + args.count + ' ResultFile=' + 'master_' + str(iter) + '.sol' + ' ' + masterProblemFile) # solve master problem
         os.system('mpirun -np ' + str(numProcs) + ' python solveSubproblems.py master_' + str(iter) + '.sol') # solve sub problem, given solution to master problem; change "subProbs.py"
-        lb = getLB("master_" + str(iter) + ".sol")
-        # read upper bound from a file or compute it somehow
+        LB = getLB("master_" + str(iter) + ".sol")
+        # @TODO-Tanveer: read upper bound from a file or compute it somehow
         if hasTerminated(iter, ub, lb):
-            #print final solution and objective value to file
-            break
-        # modify master problem
+    #@TODO-Tanveer: print final solution and objective value to file
