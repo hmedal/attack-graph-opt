@@ -566,15 +566,24 @@ while UB-LB >= tolerance * UB:
     ####Beginning of Solving the master problem loop###############################################
     mast1 = datetime.datetime.now()
     myMasterModel = read("masterModel.lp")
+    
     Vars = myMasterModel.getVars()
     print "Variables", Vars
+    varMap = {}
+    for var in Vars:
+        varMap[var.VARNAME] = var
+    print Vars
+    print varMap
+    print varMap['x02']
     theta = Vars[0]
-    
+    etaRead = {}
+    for index in range(0,k+1):
+        etaRead[index] = varMap['eta'+str(k)]
     Var_x = Vars[1: nArcs+1]
     for a in range(len(A)):
         x[a] = Var_x[a]
     
-         
+    '''     
     if k!=0:
         Start_index = nArcs+1
         Last_index = Start_index+k+1
@@ -601,6 +610,7 @@ while UB-LB >= tolerance * UB:
         Var_U = Vars[Start_index: Last_index]
         for p in range(Num_of_uVar):
             u[p] = Var_U[p] 
+    '''
             
     X, LB_temp , theta, x,m, etaVal, vVal, uVal = calcMasterproblem(myMasterModel, theta, x, m)
     ###Calculating the time to solve the master problem and the number of variables and constraints in the myMasterModel in this iterations
