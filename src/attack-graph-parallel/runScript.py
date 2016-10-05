@@ -37,8 +37,7 @@ if __name__ == "__main__":
     while UB-LB >= tolerance * UB:
         masterProblemFile = 'masterModel.lp'
         os.system('mpirun -n 1 -hosts ' + args.master + ' gurobi_cl WorkerPool=' + args.worker_pool + ' DistributedMIPJobs=' + args.count + ' ResultFile=' + 'master_' + str(iter) + '.sol' + ' ' + masterProblemFile) # solve master problem
-        os.system('mpirun -np ' + str(numProcs) + ' python solveSubproblems.py master_' + str(iter) + '.sol') # solve sub problem, given solution to master problem
+        os.system('mpirun -np ' + str(numProcs) + ' python solveSubproblems.py -m ' + masterProblemFile + ' -s master_' + str(iter) + '.sol') # solve sub problem, given solution to master problem
         LB = getLB("master_" + str(iter) + ".sol")
         # @TODO-Tanveer: read upper bound from a file or compute it somehow
-        if hasTerminated(iter, ub, lb):
     #@TODO-Tanveer: print final solution and objective value to file
